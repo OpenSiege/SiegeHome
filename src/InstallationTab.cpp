@@ -187,9 +187,6 @@ void InstallationTab::downloadFinished()
 
     std::cout << "Download finished, attempting to launch... " << qPrintable(fileName) << std::endl;
 
-    //QProcess process;
-    //process.setProgram(QDir::currentPath() + QDir::separator() + fileName);
-
     if (!QProcess::startDetached(QDir::currentPath() + QDir::separator() + fileName))
     {
         std::cout << "Unable to start process, are we in the right dir? " << qPrintable(QDir::currentPath() + QDir::separator() + fileName) << std::endl;
@@ -238,6 +235,9 @@ void InstallationTab::downloadFile(QUrl remoteLocation, QUrl localFileName)
     {
         m_Out.cancelWriting();
         m_Out.commit();
+
+        disconnect(m_Download, SIGNAL(finished()), this, SLOT(downloadReadyRead()));
+        disconnect(m_Download, SIGNAL(readyRead()), this, SLOT(downloadFinished()));
     }
 
     m_Out.setFileName(localFileName.toDisplayString(QUrl::PreferLocalFile));
