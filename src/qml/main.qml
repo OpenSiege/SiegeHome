@@ -140,6 +140,8 @@ ApplicationWindow {
                     text: qsTr("Install DSTK for DS2")
 
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+
+                    onClicked: installTabBackend.downloadDS2TK()
                 }
             }
         }

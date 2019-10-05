@@ -4,6 +4,9 @@
 #include <QNetworkRequest>
 #include <QTextStream>
 #include <QUrlQuery>
+#include <QProcess>
+#include <QDir>
+
 #include <iostream>
 
 // TODO: Decide whether to include Linux support?
@@ -123,8 +126,18 @@ void InstallationTab::downloadDS1TK()
     downloadFile(QUrl("https://github.com/OpenSiege/SiegeHome/releases/download/0.0.1/DungeonSiegeToolkit1.7.exe"), QUrl("DungeonSiegeTookit1.7.exe"));
 }
 
+void InstallationTab::downloadDS2TK()
+{
+    std::cout << "Downloading DS2TK..." << std::endl;
+
+    downloadFile(QUrl("https://github.com/OpenSiege/SiegeHome/releases/download/0.0.1/DS2TK-1.1.exe"), QUrl("DS2TK-1.1.exe"));
+}
+
 void InstallationTab::downloadFinished()
 {
+    // keep track of the fileName we are downloading
+    static QString fileName;
+
     if (m_Download->error())
     {
         std::cout << "Failed to download file: " << qPrintable(m_Download->errorString());
@@ -148,7 +161,7 @@ void InstallationTab::downloadFinished()
                 // TODO: is there a better way to grab the fileName from this query?
                 QUrlQuery urlQuery(m_Url);
                 QString queryValue = urlQuery.queryItemValue("response-content-disposition", QUrl::FullyDecoded);
-                QString fileName = queryValue.mid(queryValue.indexOf('=') + 1, queryValue.length());
+                fileName = queryValue.mid(queryValue.indexOf('=') + 1, queryValue.length());
 
                 downloadFile(m_Url, QUrl(fileName));
 
@@ -172,7 +185,15 @@ void InstallationTab::downloadFinished()
 
     m_Out.commit();
 
-    std::cout << "Download finished" << std::endl;
+    std::cout << "Download finished, attempting to launch... " << qPrintable(fileName) << std::endl;
+
+    //QProcess process;
+    //process.setProgram(QDir::currentPath() + QDir::separator() + fileName);
+
+    if (!QProcess::startDetached(QDir::currentPath() + QDir::separator() + fileName))
+    {
+        std::cout << "Unable to start process, are we in the right dir? " << qPrintable(QDir::currentPath() + QDir::separator() + fileName) << std::endl;
+    }
 }
 
 void InstallationTab::downloadReadyRead()

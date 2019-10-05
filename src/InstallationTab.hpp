@@ -28,6 +28,7 @@ public:
     Q_INVOKABLE void reloadPaths();
     Q_INVOKABLE void toggleOverride();
     Q_INVOKABLE void downloadDS1TK();
+    Q_INVOKABLE void downloadDS2TK();
 
     // TODO: remove this
     // https://developer.blackberry.com/native/documentation/dev/integrating_cpp_qml/
