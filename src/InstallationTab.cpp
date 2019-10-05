@@ -302,4 +302,7 @@ void InstallationTab::writeRegistryKeys()
     {
         std::cout << "Unable to write DS2 registry key. Did you run the program as Administrator?" << std::endl;
     }
+
+    // TODO: fix
+    reloadPaths();
 }
