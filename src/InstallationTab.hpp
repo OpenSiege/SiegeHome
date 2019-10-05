@@ -25,6 +25,9 @@ public:
     void setDS1InstallPath(const QString& path);
     void setDS2InstallPath(const QString& path);
 
+    bool queryRegistryForDS1();
+    bool queryRegistryForDS2();
+
     Q_INVOKABLE void reloadPaths();
     Q_INVOKABLE void toggleOverride();
     Q_INVOKABLE void downloadDS1TK();

@@ -63,7 +63,7 @@ void InstallationTab::setDS2InstallPath(const QString& path)
     m_ds2InstallPath = path;
 }
 
-void InstallationTab::reloadPaths()
+bool InstallationTab::queryRegistryForDS1()
 {
     // http://stackoverflow.com/questions/34065/how-to-read-a-value-from-the-windows-registry
     if (HKEY hKey; RegOpenKeyEx(HKEY_LOCAL_MACHINE, ds1RegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
@@ -78,10 +78,17 @@ void InstallationTab::reloadPaths()
             {
                 setDS1InstallPath(szBuffer);
                 qmlDS1Path->setProperty("text", m_ds1InstallPath);
+
+                return true;
             }
         }
     }
 
+    return false;
+}
+
+bool InstallationTab::queryRegistryForDS2()
+{
     // http://stackoverflow.com/questions/34065/how-to-read-a-value-from-the-windows-registry
     if (HKEY hKey; RegOpenKeyEx(HKEY_LOCAL_MACHINE, ds2RegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
     {
@@ -95,9 +102,19 @@ void InstallationTab::reloadPaths()
             {
                 setDS2InstallPath(szBuffer);
                 qmlDS1Path->setProperty("text", m_ds2InstallPath);
+
+                return true;
             }
         }
     }
+
+    return false;
+}
+
+void InstallationTab::reloadPaths()
+{
+    queryRegistryForDS1();
+    queryRegistryForDS2();
 
     std::cout << "DS1 Path: " << m_ds1InstallPath.toStdString() << std::endl;
     std::cout << "DS2 Path: " << m_ds2InstallPath.toStdString() << std::endl;

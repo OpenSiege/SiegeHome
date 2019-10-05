@@ -20,5 +20,7 @@ int main(int argc, char* argv[])
     installTabBackend.setEngine(&engine);
     engine.rootContext()->setContextProperty("installTabBackend", &installTabBackend);
 
+    installTabBackend.reloadPaths();
+
     return app.exec();
 }
