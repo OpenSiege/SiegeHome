@@ -114,10 +114,40 @@ ApplicationWindow {
 
         Item {
             id: ds1RegistryKeysTab
+
+            ColumnLayout {
+
+                id: ds1RegistryGrid
+                anchors.fill: parent
+                anchors.leftMargin: 5
+                anchors.rightMargin: 5
+                anchors.topMargin: 5
+                anchors.bottomMargin: 5
+
+                Label {
+                    objectName: "ds1RegistryExePath"
+                    text: qsTr("ExePath: <Undefined>");
+                }
+            }
         }
 
         Item {
             id: ds2RegistryKeysTab
+
+            ColumnLayout {
+
+                id: ds2RegistryGrid
+                anchors.fill: parent
+                anchors.leftMargin: 5
+                anchors.rightMargin: 5
+                anchors.topMargin: 5
+                anchors.bottomMargin: 5
+
+                Label {
+                    objectName: "ds2RegistryAppPath"
+                    text: qsTr("AppPath: <Undefined>");
+                }
+            }
         }
 
         Item {

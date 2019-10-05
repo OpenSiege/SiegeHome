@@ -79,6 +79,9 @@ bool InstallationTab::queryRegistryForDS1()
                 setDS1InstallPath(szBuffer);
                 qmlDS1Path->setProperty("text", m_ds1InstallPath);
 
+                QObject* appPathLabel = m_Engine->rootObjects().first()->findChild<QObject*>("ds1RegistryExePath", Qt::FindChildrenRecursively);
+                appPathLabel->setProperty("text", "ExePath: " + QString(szBuffer));
+
                 return true;
             }
         }
@@ -102,6 +105,9 @@ bool InstallationTab::queryRegistryForDS2()
             {
                 setDS2InstallPath(szBuffer);
                 qmlDS1Path->setProperty("text", m_ds2InstallPath);
+
+                QObject* appPathLabel = m_Engine->rootObjects().first()->findChild<QObject*>("ds2RegistryAppPath", Qt::FindChildrenRecursively);
+                appPathLabel->setProperty("text", "AppPath: " + QString(szBuffer));
 
                 return true;
             }
