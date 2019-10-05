@@ -111,6 +111,7 @@ ApplicationWindow {
                 }
 
                 Button {
+                    objectName: "writeRegistryKeysButton"
                     text: qsTr("Write Registry Keys")
                     onClicked: installTabBackend.writeRegistryKeys()
 
