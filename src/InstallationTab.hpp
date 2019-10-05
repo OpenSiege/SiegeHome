@@ -4,7 +4,9 @@
 
 #include <QObject>
 #include <QString>
-
+#include <QSaveFile>
+#include <QNetworkReply>
+#include <QNetworkAccessManager>
 
 class QQmlApplicationEngine;
 class InstallationTab : public QObject
@@ -15,6 +17,7 @@ class InstallationTab : public QObject
 
 public:
     explicit InstallationTab(QObject* parent = nullptr);
+    ~InstallationTab();
 
     QString ds1InstallPath();
     QString ds2InstallPath();
@@ -24,6 +27,7 @@ public:
 
     Q_INVOKABLE void reloadPaths();
     Q_INVOKABLE void toggleOverride();
+    Q_INVOKABLE void downloadDS1TK();
 
     // TODO: remove this
     // https://developer.blackberry.com/native/documentation/dev/integrating_cpp_qml/
@@ -34,7 +38,16 @@ signals:
     void ds1InstallPathChanged();
     void ds2InstallPathChanged();
 
+private slots:
+    void downloadFinished();
+    void downloadReadyRead();
+
 private:
+
+    bool isHttpRedirect() const;
+    void reportRedirect();
+
+    void downloadFile(QUrl remoteLocation, QUrl localFileName);
 
     QQmlApplicationEngine* m_Engine;
 
@@ -42,6 +55,11 @@ private:
     QString m_ds2InstallPath;
 
     bool m_overridePaths = false;
+
+    QSaveFile m_Out;
+    QUrl m_Url;
+    QNetworkAccessManager m_Manager;
+    QNetworkReply* m_Download;
 };
 
 #endif // INSTALLATION_TAB_HPP
