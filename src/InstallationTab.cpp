@@ -10,26 +10,10 @@
 #include <Windows.h>
 #include <shlobj.h>
 
-// Dungeon Siege 1 registry keys
-constexpr const char* ds1RegistryKeyVec[] =
-{
-    "Software\\Wow6432Node\\Microsoft\\Microsoft Games\\Dungeon Siege Legends of Aranna\\1.0",
-    "Software\\Wow6432Node\\Microsoft\\Microsoft Games\\DungeonSiege\\1.0",
-
-    // We only care about 32 bit keys
-    // "Software\\Microsoft\\Microsoft Games\\Dungeon Siege Legends of Aranna\\1.0",
-    // "Software\\Microsoft\\Microsoft Games\\DungeonSiege\\1.0",
-    // "Software\\Microsoft\\Microsoft Games\\DungeonSiegeDemo\\1.0"
-};
-
-// Dungeon Siege 2 registry key
-constexpr const char* ds2RegistryKeyVec[] =
-{
-    "Software\\Wow6432Node\\Microsoft\\Microsoft Games\\DungeonSiege2",
-
-    // We only care about 32 bit keys
-    // "Software\\Microsoft\\Microsoft Games\\DungeonSiege2",
-};
+// Registry keys
+constexpr const char* ds1RegistryKey = "Software\\Wow6432Node\\Microsoft\\Microsoft Games\\DungeonSiege\\1.0";
+constexpr const char* ds1LOARegistryKey = "Software\\Wow6432Node\\Microsoft\\Microsoft Games\\Dungeon Siege Legends of Aranna\\1.0";
+constexpr const char* ds2RegistryKey = "Software\\Wow6432Node\\Microsoft\\Microsoft Games\\DungeonSiege2";
 
 InstallationTab::InstallationTab(QObject* parent) : QObject(parent), m_Engine(nullptr), m_Download(nullptr)
 {
@@ -78,46 +62,36 @@ void InstallationTab::setDS2InstallPath(const QString& path)
 
 void InstallationTab::reloadPaths()
 {
-    for (const char* key : ds1RegistryKeyVec)
+    // http://stackoverflow.com/questions/34065/how-to-read-a-value-from-the-windows-registry
+    if (HKEY hKey; RegOpenKeyEx(HKEY_LOCAL_MACHINE, ds1RegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
     {
-        // http://stackoverflow.com/questions/34065/how-to-read-a-value-from-the-windows-registry
-        if (HKEY hKey; RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+        CHAR szBuffer[MAX_PATH];
+        DWORD dwBufferSize = sizeof(szBuffer);
+
+        if (RegQueryValueEx(hKey, "EXE Path", 0, NULL, (LPBYTE)szBuffer, &dwBufferSize) == ERROR_SUCCESS)
         {
-            CHAR szBuffer[MAX_PATH];
-            DWORD dwBufferSize = sizeof(szBuffer);
-
-            if (RegQueryValueEx(hKey, "EXE Path", 0, NULL, (LPBYTE)szBuffer, &dwBufferSize) == ERROR_SUCCESS)
+            QObject* qmlDS1Path = m_Engine->rootObjects().first()->findChild<QObject*>("textFieldDS1InstallPath", Qt::FindChildrenRecursively);
+            if (qmlDS1Path)
             {
-                QObject* qmlDS1Path = m_Engine->rootObjects().first()->findChild<QObject*>("textFieldDS1InstallPath", Qt::FindChildrenRecursively);
-                if (qmlDS1Path)
-                {
-                    setDS1InstallPath(szBuffer);
-                    qmlDS1Path->setProperty("text", m_ds1InstallPath);
-                }
-
-                break;
+                setDS1InstallPath(szBuffer);
+                qmlDS1Path->setProperty("text", m_ds1InstallPath);
             }
         }
     }
 
-    for (const char* key : ds2RegistryKeyVec)
+    // http://stackoverflow.com/questions/34065/how-to-read-a-value-from-the-windows-registry
+    if (HKEY hKey; RegOpenKeyEx(HKEY_LOCAL_MACHINE, ds2RegistryKey, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
     {
-        // http://stackoverflow.com/questions/34065/how-to-read-a-value-from-the-windows-registry
-        if (HKEY hKey; RegOpenKeyEx(HKEY_LOCAL_MACHINE, key, 0, KEY_READ, &hKey) == ERROR_SUCCESS)
+        CHAR szBuffer[MAX_PATH];
+        DWORD dwBufferSize = sizeof(szBuffer);
+
+        if (RegQueryValueEx(hKey, "AppPath", 0, NULL, (LPBYTE)szBuffer, &dwBufferSize) == ERROR_SUCCESS)
         {
-            CHAR szBuffer[MAX_PATH];
-            DWORD dwBufferSize = sizeof(szBuffer);
-
-            if (RegQueryValueEx(hKey, "AppPath", 0, NULL, (LPBYTE)szBuffer, &dwBufferSize) == ERROR_SUCCESS)
+            QObject* qmlDS1Path = m_Engine->rootObjects().first()->findChild<QObject*>("textFieldDS2InstallPath", Qt::FindChildrenRecursively);
+            if (qmlDS1Path)
             {
-                QObject* qmlDS1Path = m_Engine->rootObjects().first()->findChild<QObject*>("textFieldDS2InstallPath", Qt::FindChildrenRecursively);
-                if (qmlDS1Path)
-                {
-                    setDS2InstallPath(szBuffer);
-                    qmlDS1Path->setProperty("text", m_ds2InstallPath);
-                }
-
-                break;
+                setDS2InstallPath(szBuffer);
+                qmlDS1Path->setProperty("text", m_ds2InstallPath);
             }
         }
     }
