@@ -212,7 +212,7 @@ void InstallationTab::downloadFinished()
 
     if (!QProcess::startDetached(QDir::currentPath() + QDir::separator() + fileName))
     {
-        std::cout << "Unable to start process, are we in the right dir? " << qPrintable(QDir::currentPath() + QDir::separator() + fileName) << std::endl;
+        std::cout << "Unable to start installer [" << qPrintable(QDir::currentPath() + QDir::separator() + fileName) << "]" << std::endl;
     }
 }
 
@@ -277,4 +277,29 @@ void InstallationTab::downloadFile(QUrl remoteLocation, QUrl localFileName)
 
     connect(m_Download, SIGNAL(finished()), SLOT(downloadFinished()));
     connect(m_Download, SIGNAL(readyRead()), SLOT(downloadReadyRead()));
+}
+
+void InstallationTab::writeRegistryKeys()
+{
+    if (HKEY hKey; RegOpenKeyEx(HKEY_LOCAL_MACHINE, ds1RegistryKey, 0, KEY_WRITE, &hKey) == ERROR_SUCCESS)
+    {
+        std::cout << "Writing key [" << ds1RegistryKey << "] with value [" << qPrintable(m_ds1InstallPath) << "]" << std::endl;
+
+        RegSetValueEx(hKey, "Exe Path", NULL, REG_SZ, (LPBYTE)m_ds1InstallPath.toStdString().c_str(), m_ds1InstallPath.length());
+    }
+    else
+    {
+        std::cout << "Unable to write DS1 registry key. Did you run the program as Administrator?" << std::endl;
+    }
+
+    if (HKEY hKey; RegOpenKeyEx(HKEY_LOCAL_MACHINE, ds2RegistryKey, 0, KEY_WRITE, &hKey) == ERROR_SUCCESS)
+    {
+        std::cout << "Writing key [" << ds2RegistryKey << "] with value [" << qPrintable(m_ds2InstallPath) << "]" << std::endl;
+
+        RegSetValueEx(hKey, "AppPath", NULL, REG_SZ, (LPBYTE)m_ds2InstallPath.toStdString().c_str(), m_ds2InstallPath.length());
+    }
+    else
+    {
+        std::cout << "Unable to write DS2 registry key. Did you run the program as Administrator?" << std::endl;
+    }
 }

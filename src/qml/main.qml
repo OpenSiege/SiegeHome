@@ -109,6 +109,16 @@ ApplicationWindow {
 
                     Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 }
+
+                Button {
+                    text: qsTr("Write Registry Keys")
+                    onClicked: installTabBackend.writeRegistryKeys()
+
+                    Layout.column: 1
+                    Layout.row: 4
+
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                }
             }
         }
 
