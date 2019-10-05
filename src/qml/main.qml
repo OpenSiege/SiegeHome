@@ -11,6 +11,13 @@ ApplicationWindow {
 
     width: 628
     height: 195
+
+    maximumWidth: width
+    maximumHeight: height
+
+    minimumWidth: width
+    minimumHeight: height
+
     visible: true
     title: "Siege Home"
 
@@ -55,22 +62,33 @@ ApplicationWindow {
             GridLayout {
 
                 id: grid
-                columns: 2
+                columns: 3
                 anchors.fill: parent
+                anchors.leftMargin: 5
+                anchors.rightMargin: 5
+                anchors.topMargin: 5
+                anchors.bottomMargin: 5
+
+                Label {
+                    text: "DS1 Install Path:"
+                }
 
                 TextField {
                     readOnly: true
                     objectName: "textFieldDS1InstallPath"
                     placeholderText: qsTr("Dungeon Siege 1 Install Path")
                     onTextChanged: installTabBackend.ds1InstallPath = text
+
+                    Layout.preferredWidth: 350
                 }
                 
                 CheckBox {
-                    text: qsTr("Override Default Values")
+                    text: qsTr("Override")
                     onClicked: installTabBackend.toggleOverride();
+                }
 
-                    Layout.column: 1
-                    Layout.row: 0
+                Label {
+                    text: "DS 2 Install Path:"
                 }
 
                 TextField {
@@ -79,16 +97,49 @@ ApplicationWindow {
                     placeholderText: qsTr("Dungeon Siege 2 Install Path")
                     onTextChanged: installTabBackend.ds2InstallPath = text
 
-                    Layout.column: 0
-                    Layout.row: 1
+                    Layout.preferredWidth: 350
                 }
 
                 Button {
                     text: qsTr("Resolve Paths")
                     onClicked: installTabBackend.reloadPaths()
 
-                    Layout.column: 0
-                    Layout.row: 2
+                    Layout.column: 1
+                    Layout.row: 3
+
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+                }
+            }
+        }
+
+        Item {
+            id: ds1RegistryKeysTab
+        }
+
+        Item {
+            id: ds2RegistryKeysTab
+        }
+
+        Item {
+            id: toolsTab
+
+            ColumnLayout {
+
+                id: toolsGrid
+                anchors.fill: parent
+
+                Button {
+                    text: qsTr("Install DSTK for DS1")
+
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
+
+                    onClicked: installTabBackend.downloadDS1TK()
+                }
+
+                Button {
+                    text: qsTr("Install DSTK for DS2")
+
+                    Layout.alignment: Qt.AlignHCenter | Qt.AlignVCenter
                 }
             }
         }
