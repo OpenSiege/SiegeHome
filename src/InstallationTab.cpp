@@ -120,25 +120,7 @@ void InstallationTab::downloadDS1TK()
 {
     std::cout << "Downloading DS1TK..." << std::endl;
 
-    static QString filename = "DungeonSiegeTookit1.7.exe";
-
-    m_Url = "https://github.com/OpenSiege/SiegeHome/releases/download/0.0.1/DungeonSiegeToolkit1.7.exe";
-
-    m_Out.setFileName(m_Url.fileName());
-    if (!m_Out.open(QIODevice::WriteOnly))
-    {
-        std::cerr << "Failed to write file. Permission or path problem?" << qPrintable(m_Out.fileName());
-
-        return;
-    }
-
-    QNetworkRequest request(m_Url);
-
-    // we know the first request is going to redirect so just wait for it
-    m_Download = m_Manager.get(request);
-
-    connect(m_Download, SIGNAL(finished()), SLOT(downloadFinished()));
-    connect(m_Download, SIGNAL(readyRead()), SLOT(downloadReadyRead()));
+    downloadFile(QUrl("https://github.com/OpenSiege/SiegeHome/releases/download/0.0.1/DungeonSiegeToolkit1.7.exe"), QUrl("DungeonSiegeTookit1.7.exe"));
 }
 
 void InstallationTab::downloadFinished()
@@ -237,9 +219,6 @@ void InstallationTab::downloadFile(QUrl remoteLocation, QUrl localFileName)
         m_Out.commit();
     }
 
-    disconnect(m_Download, SIGNAL(finished()), this, SLOT(downloadReadyRead()));
-    disconnect(m_Download, SIGNAL(readyRead()), this, SLOT(downloadFinished()));
-
     m_Out.setFileName(localFileName.toDisplayString(QUrl::PreferLocalFile));
     if (!m_Out.open(QIODevice::WriteOnly))
     {
@@ -249,6 +228,8 @@ void InstallationTab::downloadFile(QUrl remoteLocation, QUrl localFileName)
     }
 
     QNetworkRequest request(m_Url);
+
+    m_Download = m_Manager.get(request);
 
     connect(m_Download, SIGNAL(finished()), SLOT(downloadFinished()));
     connect(m_Download, SIGNAL(readyRead()), SLOT(downloadReadyRead()));
